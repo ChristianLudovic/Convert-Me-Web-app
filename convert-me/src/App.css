@@ -126,6 +126,7 @@
     border-right: 1px solid #C6C6C6;
     border-bottom: 1px solid #C6C6C6;
     border-radius: 0 4px 4px 0;
+    cursor: pointer;
 }
 
 .currency-convert span, .currency-select span{
@@ -191,4 +192,53 @@
     border-radius: 8px;
     box-shadow: 0px 20px 50px 2px rgba(26, 26, 26, 0.10);
     margin-top: 40px;
+    position: relative;
+}
+
+/* dropdown */
+
+.item-content{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 107px 11px 47px;
+}
+
+.item-content .sigle {
+    font-weight: 600;
+    width: 31px;
+}
+
+.definition{
+    width: 136px;
+}
+
+.dropdown-items{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.dropdown-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 230px;
+    background-color: #fff;
+    border-radius: 8px;
+    width: 363px;
+    box-shadow: 0px 3px 12px 0px rgba(26, 26, 26, 0.10);
+}
+
+.item-content:hover{
+    background-color: #F6F6F6;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dropdown{
+    position: absolute;
+    left: 40px;
+    top: 315px;
 }

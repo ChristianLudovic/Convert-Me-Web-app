@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Dropdown } from "./dropDown.jsx"
 
 export function ConvertBox (){
 
@@ -20,8 +21,24 @@ export function ConvertBox (){
     }
 
     const convert = (value) => {
-        return parseFloat(value) * tauxEchange
+        if(value === ''){
+            return 0
+        }
+        return (parseFloat(value) * tauxEchange).toFixed(4)
     }
+
+    //ouvrir le dropdown
+
+    const [open, setOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setOpen(!open);
+        document.querySelector()
+    };
+
+    //selectionner la devise et femrer le dropdown
+
+    const [currency, setCurrency] = useState ('')
 
     return(
         <div className="converter-box-container">
@@ -38,7 +55,7 @@ export function ConvertBox (){
                             <input type="text" id="amount" placeholder="1" value={valueEntered} onChange={handleChange}/>
                             
                         </div>
-                        <div className="currency-select">
+                        <div className="currency-select" onClick={toggleDropdown}>
                             <span>USD</span>
                             <svg className="caret-down" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M0.968806 0H9.00006C9.56256 0 9.84381 0.6875 9.43756 1.09375L5.43756 5.09375C5.18756 5.34375 4.78131 5.34375 4.53131 5.09375L0.531306 1.09375C0.125056 0.6875 0.406306 0 0.968806 0Z" fill="#1A1A1A" />
@@ -64,15 +81,18 @@ export function ConvertBox (){
                     </div>
                 </div>
                 <div className="exchangeFees-info">
-                    <span>1.00 USD = 0.8875 GBP</span>
+                    <span>1.00 USD = 0.7986 GBP</span>
                     <svg className="info-circle" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8 16C12.4062 16 16 12.4375 16 8C16 3.59375 12.4062 0 8 0C3.5625 0 0 3.59375 0 8C0 12.4375 3.5625 16 8 16ZM6.75 10.5H7.5V8.5H6.75C6.3125 8.5 6 8.1875 6 7.75C6 7.34375 6.3125 7 6.75 7H8.25C8.65625 7 9 7.34375 9 7.75V10.5H9.25C9.65625 10.5 10 10.8438 10 11.25C10 11.6875 9.65625 12 9.25 12H6.75C6.3125 12 6 11.6875 6 11.25C6 10.8438 6.3125 10.5 6.75 10.5ZM8 6C7.4375 6 7 5.5625 7 5C7 4.46875 7.4375 4 8 4C8.53125 4 9 4.46875 9 5C9 5.5625 8.53125 6 8 6Z" fill="#3D55DD" />
                     </svg>
                 </div>
             </div>
+            {open && <Dropdown className="show"/>}
         </div>
     )
     
 }
 
-//recuperer la valuer entrer dans l'input
+//handle entered amount and convert it
+
+
