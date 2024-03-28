@@ -237,8 +237,14 @@
     cursor: pointer;
 }
 
-.dropdown{
+.dropdown-left{
     position: absolute;
     left: 40px;
+    top: 315px;
+}
+
+.dropdown-right{
+    position: absolute;
+    right: 40px;
     top: 315px;
 }
