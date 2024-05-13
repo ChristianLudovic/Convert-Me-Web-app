@@ -1,146 +1,100 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react";
+import axios from 'axios';
 
-export function ConvertBox (){
-
-    //recuperer la valeur enter par l'utilisateur
-
-    const [valueEntered, setValueEntered] = useState('')
-
-    const [valueConverted, setValueConverted] = useState('')
-
-    const [tauxEchange, setTauxEchange] = useState(0.79)
-
-    const dropdownLeftRef = useRef(null)
-
-    const dropdownRightRef = useRef(null)
-
+export function ConvertBox() {
+    const [valueEntered, setValueEntered] = useState('');
+    const [valueConverted, setValueConverted] = useState('');
+    const [tauxEchange, setTauxEchange] = useState(0.79);
+    const dropdownLeftRef = useRef(null);
+    const dropdownRightRef = useRef(null);
     const [openLeft, setOpenLeft] = useState(false);
-    
-    const [openRight, setOpenRight] = useState (false)
-
-    const [deviseLeft, setDeviseLeft] = useState("USD"); 
-    
+    const [openRight, setOpenRight] = useState(false);
+    const [deviseLeft, setDeviseLeft] = useState("USD");
     const [deviseRight, setDeviseRight] = useState("GBP");
 
-    
-    //recuperer la valeur entrée par l'utilisateur et la convertir
     const handleChange = (event) => {
-        const value = event.target.value
-
-        setValueEntered(value)
-
-        const convertValue = convert(value, tauxEchange)
-        setValueConverted(convertValue)
-    }
+        const value = event.target.value;
+        setValueEntered(value);
+        const convertValue = convert(value, tauxEchange);
+        setValueConverted(convertValue);
+    };
 
     const convert = (value, tauxEchange$) => {
-        if(value === ''){
-            return 0
+        if (value === '') {
+            return 0;
         }
-        return (parseFloat(value) * tauxEchange$).toFixed(4)
-    }
-
-
-    //ouvrir le dropdown
+        return (parseFloat(value) * tauxEchange$).toFixed(4);
+    };
 
     const toggleDropdownLeft = () => {
         setOpenLeft(!openLeft);
     };
 
     const toogleDropdownRight = () => {
-        setOpenRight(!openRight)
-    }
-
-    //selectionner la devise et femrer le dropdown
+        setOpenRight(!openRight);
+    };
 
     const handleChangeDeviseLeft = (newCurrencyLeft, newEchangesFees) => {
         setDeviseLeft(newCurrencyLeft);
-        setTauxEchange(newEchangesFees)
+        setTauxEchange(newEchangesFees);
     };
 
     const handleChangeDeviseRight = (newCurrencyRight, newEchangesFeesRight) => {
         setDeviseRight(newCurrencyRight);
-        setTauxEchange(newEchangesFeesRight)
+        setTauxEchange(newEchangesFeesRight);
     };
 
     useEffect(() => {
-        if (deviseLeft === "USD" && deviseRight === "EUR") {
-            setTauxEchange(0.86)
-        } else if (deviseLeft === "USD" && deviseRight === "XOF") {
-            setTauxEchange(0.0013)
-        } else if (deviseLeft === "USD" && deviseRight === "TRY") {
-            setTauxEchange(0.025)
-        } else if (deviseLeft === "USD" && deviseRight === "USD") {
-            setTauxEchange(1)
-        } else if (deviseLeft === "EUR" && deviseRight === "USD") {
-            setTauxEchange(1.16)
-        } else if (deviseLeft === "EUR" && deviseRight === "XOF") {
-            setTauxEchange(0.0015)
-        } else if (deviseLeft === "EUR" && deviseRight === "TRY") {
-            setTauxEchange(0.028)
-        } else if (deviseLeft === "EUR" && deviseRight === "EUR") {
-            setTauxEchange(1)
-        } else if (deviseLeft === "XOF" && deviseRight === "USD") {
-            setTauxEchange(0.00077)
-        } else if (deviseLeft === "XOF" && deviseRight === "EUR") {
-            setTauxEchange(0.00066)
-        } else if (deviseLeft === "XOF" && deviseRight === "TRY") {
-            setTauxEchange(0.019)
-        } else if (deviseLeft === "XOF" && deviseRight === "XOF") {
-            setTauxEchange(1)
-        } else if (deviseLeft === "TRY" && deviseRight === "USD") {
-            setTauxEchange(0.40)
-        } else if (deviseLeft === "TRY" && deviseRight === "EUR") {
-            setTauxEchange(0.36)
-        } else if (deviseLeft === "TRY" && deviseRight === "XOF") {
-            setTauxEchange(52.50)
-        } else if (deviseLeft === "TRY" && deviseRight === "TRY") {
-            setTauxEchange(1)
-        }
-    
-        const convertValue = convert(valueEntered, tauxEchange)
-        setValueConverted(convertValue)
-        
-    }, [deviseLeft, deviseRight])
+        axios.get(`https://v6.exchangerate-api.com/v6/117de57bbb8560f164535e04/latest/${deviseLeft}`)
+            .then(response => {
+                const data = response.data;
+                const newExchangeRates = data.conversion_rates;
+                setTauxEchange(newExchangeRates[deviseRight]);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }, [deviseLeft, deviseRight]);
 
-
-    //fermer le dropdown lorsqu'on clique sur un item
+    useEffect(() => {
+        const convertValue = convert(valueEntered, tauxEchange);
+        setValueConverted(convertValue);
+    }, [valueEntered, tauxEchange]);
 
     const closeDropdownLeft = () => {
-        setOpenLeft(!openLeft)
-    }
+        setOpenLeft(false);
+    };
 
     const closeDropdownRight = () => {
-        setOpenRight(!openRight)
-    }
-
-    // fermer le dropdown lorsqu'on clique en dehors du dropdown
+        setOpenRight(false);
+    };
 
     useEffect(() => {
         const handleClickOutsideLeft = (event) => {
             if (dropdownLeftRef.current && !dropdownLeftRef.current.contains(event.target)) {
                 setOpenLeft(false);
             }
-        }
+        };
         document.addEventListener("mousedown", handleClickOutsideLeft);
         return () => {
             document.removeEventListener("mousedown", handleClickOutsideLeft);
-        }
-    }, [dropdownLeftRef])
+        };
+    }, [dropdownLeftRef]);
 
     useEffect(() => {
         const handleClickOutsideRight = (event) => {
             if (dropdownRightRef.current && !dropdownRightRef.current.contains(event.target)) {
                 setOpenRight(false);
             }
-        }
+        };
         document.addEventListener("mousedown", handleClickOutsideRight);
         return () => {
             document.removeEventListener("mousedown", handleClickOutsideRight);
-        }
-    }, [dropdownRightRef])
+        };
+    }, [dropdownRightRef]);
 
 
+    console.log(tauxEchange)
     
 
     return(
@@ -184,7 +138,7 @@ export function ConvertBox (){
                     </div>
                 </div>
                 <div className="exchangeFees-info">
-                    <span>1.00 USD = 0.7986 GBP</span>
+                    <span>1.00 {deviseLeft} = {tauxEchange} {deviseRight}</span>
                     <svg className="info-circle" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8 16C12.4062 16 16 12.4375 16 8C16 3.59375 12.4062 0 8 0C3.5625 0 0 3.59375 0 8C0 12.4375 3.5625 16 8 16ZM6.75 10.5H7.5V8.5H6.75C6.3125 8.5 6 8.1875 6 7.75C6 7.34375 6.3125 7 6.75 7H8.25C8.65625 7 9 7.34375 9 7.75V10.5H9.25C9.65625 10.5 10 10.8438 10 11.25C10 11.6875 9.65625 12 9.25 12H6.75C6.3125 12 6 11.6875 6 11.25C6 10.8438 6.3125 10.5 6.75 10.5ZM8 6C7.4375 6 7 5.5625 7 5C7 4.46875 7.4375 4 8 4C8.53125 4 9 4.46875 9 5C9 5.5625 8.53125 6 8 6Z" fill="#3D55DD" />
                     </svg>
@@ -195,21 +149,29 @@ export function ConvertBox (){
                     <div className="dropdown-left show" id="myDropdown" onClick={closeDropdownLeft}>
                         <div className="dropdown-container">
                             <div className="dropdown-items">
-                                <div className="item-content" id="item-content1" onClick={() =>{handleChangeDeviseLeft('EUR', 0.86)}}>
+                                <div className="item-content" id="item-content1" onClick={() =>{handleChangeDeviseLeft('EUR', tauxEchange)}}>
                                     <span className="sigle">EUR</span>
                                     <span className="definition">Euro</span>
                                 </div>
-                                <div className="item-content" onClick={() =>{handleChangeDeviseLeft('XOF', 0.0013)}}>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseLeft('XOF', tauxEchange)}}>
                                     <span className="sigle">XOF</span>
                                     <span className="definition">Francs CFA</span>
                                 </div>
-                                <div className="item-content" onClick={() =>{handleChangeDeviseLeft('TRY', 0.025)}}>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseLeft('TRY', tauxEchange)}}>
                                     <span className="sigle">TRY</span>
                                     <span className="definition">Turkish Lira</span>
                                 </div>
-                                <div className="item-content" onClick={() =>{handleChangeDeviseLeft('USD', 0.79)}}>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseLeft('USD', tauxEchange)}}>
                                     <span className="sigle">USD</span>
                                     <span className="definition">US Dollar</span>
+                                </div>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseLeft('GBP', tauxEchange)}}>
+                                    <span className="sigle">GBP</span>
+                                    <span className="definition">British Pound</span>
+                                </div>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseLeft('NGN', tauxEchange)}}>
+                                    <span className="sigle">NGN</span>
+                                    <span className="definition">Naira</span>
                                 </div>
                             </div>
                         </div>
@@ -222,29 +184,36 @@ export function ConvertBox (){
                     <div className="dropdown-right show" id="myDropdown" onClick={closeDropdownRight}>
                         <div className="dropdown-container">
                             <div className="dropdown-items">
-                                <div className="item-content" id="item-content1" onClick={() =>{handleChangeDeviseRight('EUR', 0.86)}}>
+                                <div className="item-content" id="item-content1" onClick={() =>{handleChangeDeviseRight('EUR', tauxEchange)}}>
                                     <span className="sigle">EUR</span>
                                     <span className="definition">Euro</span>
                                 </div>
-                                <div className="item-content" onClick={() =>{handleChangeDeviseRight('XOF', 0.0013)}}>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseRight('XOF', tauxEchange)}}>
                                     <span className="sigle">XOF</span>
                                     <span className="definition">Francs CFA</span>
                                 </div>
-                                <div className="item-content" onClick={() =>{handleChangeDeviseRight('TRY', 0.025)}}>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseRight('TRY', tauxEchange)}}>
                                     <span className="sigle">TRY</span>
                                     <span className="definition">Turkish Lira</span>
                                 </div>
-                                <div className="item-content" onClick={() =>{handleChangeDeviseRight('USD', 0.79)}}>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseRight('USD', tauxEchange)}}>
                                     <span className="sigle">USD</span>
                                     <span className="definition">US Dollar</span>
+                                </div>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseRight('GBP', tauxEchange)}}>
+                                    <span className="sigle">GBP</span>
+                                    <span className="definition">British Pound</span>
+                                </div>
+                                <div className="item-content" onClick={() =>{handleChangeDeviseRight('NGN', tauxEchange)}}>
+                                    <span className="sigle">NGN</span>
+                                    <span className="definition">Naira</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-            }
+                }
             </div>
   
         </div>
     )
-    
 }

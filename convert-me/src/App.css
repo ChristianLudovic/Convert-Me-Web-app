@@ -193,6 +193,7 @@
     box-shadow: 0px 20px 50px 2px rgba(26, 26, 26, 0.10);
     margin-top: 40px;
     position: relative;
+    height: 80%;
 }
 
 /* dropdown */
@@ -218,7 +219,35 @@
     flex-direction: column;
     gap: 8px;
     align-items: center;
+    max-height: 230px;
+    overflow-y:scroll;
+    padding: 20px 0;
 }
+
+.dropdown-items::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    border-radius: 5px;
+    
+}
+
+.dropdown-items::-webkit-scrollbar-track {
+    background: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  /* Handle */
+  .dropdown-items::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+  }
+  
+  /* Handle on hover */
+  .dropdown-items::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    
+  }
 
 .dropdown-container{
     display: flex;
