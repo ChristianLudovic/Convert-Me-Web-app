@@ -1,5 +1,9 @@
 @import url('https://fonts.cdnfonts.com/css/netflix-font');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 *{
     margin: 0;
     padding: 0;
